@@ -84,3 +84,12 @@ exports.updateStore = async (req, res) => {
 	);
 	res.redirect(`/stores/${store._id}/edit`);
 };
+
+exports.getStoresByTag = async (req, res) => {
+	const currentTag = req.params.tags;
+	const tagsPromise = Store.getTagsList();
+	const tagQuery = currentTag || { $exists: true };
+	const storesPromise = Store.find({ tags: tagQuery });
+	const [tags, stores] = await Promise.all([tagsPromise, storesPromise]);
+	res.render("tags", { tags, title: "Tags", currentTag, stores });
+};
